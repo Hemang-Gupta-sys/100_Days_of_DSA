@@ -25,52 +25,20 @@ The number of nodes in the list is in the range [1, 100].
 
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct Node {
-    int data;
-    struct Node* next;
-} Node;
-Node* createLinkedList(int* arr, int size) {
-    if (size == 0) return NULL;
-
-    Node* head = (Node*)malloc(sizeof(Node));
-    head->data = arr[0];
-    head->next = NULL;
-
-    Node* current = head;
-    for (int i = 1; i < size; i++) {
-        Node* newNode = (Node*)malloc(sizeof(Node));
-        newNode->data = arr[i];
-        newNode->next = NULL;
-        current->next = newNode;
-        current = newNode;
-    }
-    return head;
-}
-void traverseLinkedList(Node* head) {
-    Node* current = head;
-    while (current != NULL) {
-        printf("%d ", current->data);
-        current = current->next;
-    }
-    printf("\n");
-}
-void freeLinkedList(Node* head) {
-    Node* current = head;
-    while (current != NULL) {
-        Node* temp = current;
-        current = current->next;
-        free(temp);
-    }
-}
-Node* middleNode(Node* head) {
-    Node* slow = head;
-    Node* fast = head;
+struct ListNode {
+    int val;
+    struct ListNode* next;
+};
+struct ListNode* middleNode(struct ListNode* head) {
+    struct ListNode* slow = head;
+    struct ListNode* fast = head;
 
     while (fast != NULL && fast->next != NULL) {
         slow = slow->next;
         fast = fast->next->next;
     }
-    return slow;
+
+    return slow;   
 }
 int main() {
     int n, arr[100];
@@ -82,13 +50,38 @@ int main() {
         scanf("%d", &arr[i]);
     }
 
-    Node* head = createLinkedList(arr, n);
+    struct ListNode* head = NULL;
+    struct ListNode* current = NULL;
+
+    for (int i = 0; i < n; i++) {
+        struct ListNode* newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+        newNode->val = arr[i];
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            current = head;
+        } else {
+            current->next = newNode;
+            current = current->next;
+        }
+    }
+
+    struct ListNode* middle = middleNode(head);
     
-    Node* middle = middleNode(head);
+    printf("The middle node of the linked list is: ");
+    while (middle != NULL) {
+        printf("%d ", middle->val);
+        middle = middle->next;
+    }
+    printf("\n");
     
-    printf("The middle node and its subsequent nodes are: ");
-    traverseLinkedList(middle);
+    current = head;
+    while (current != NULL) {
+        struct ListNode* temp = current;
+        current = current->next;
+        free(temp);
+    }
     
-    freeLinkedList(head);
     return 0;
 }
